@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import random.reactive.reactiveexamples.domain.Person;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.util.List;
 
@@ -34,6 +35,23 @@ class PersonRepositoryImplTest {
     void getByIdSubscribe() {
         int personId = 2;
         Mono<Person> personMono = personRepository.getById(personId);
+
+        StepVerifier.create(personMono).expectNextCount(1).verifyComplete();
+
+        personMono.subscribe(person -> {
+            System.out.println(person);
+            assertEquals(personId, person.getId());
+        });
+        // personMono.subscribe(System.out::println);
+    }
+
+    @Test
+    void getByIdNotFound() {
+        int personId = 8;
+        Mono<Person> personMono = personRepository.getById(personId);
+
+        StepVerifier.create(personMono).verifyComplete();
+        // StepVerifier.create(personMono).expectNextCount(0).verifyComplete(); // The same
 
         personMono.subscribe(person -> {
             System.out.println(person);
@@ -68,6 +86,8 @@ class PersonRepositoryImplTest {
     @Test
     void testFluxSubscribe() {
         Flux<Person> personFlux = personRepository.findAll();
+
+        StepVerifier.create(personFlux).expectNextCount(4).verifyComplete();
 
         personFlux.subscribe(person -> {
             System.out.println(person);
