@@ -8,6 +8,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class PersonRepositoryImplTest {
 
     private PersonRepositoryImpl personRepository;
@@ -19,28 +21,34 @@ class PersonRepositoryImplTest {
 
     @Test
     void getByIdBlock() {
-        Mono<Person> personMono = personRepository.getById(1);
+        int personId = 1;
+        Mono<Person> personMono = personRepository.getById(personId);
 
         Person person = personMono.block();
 
         System.out.println(person);
+        assertEquals(personId, person.getId());
     }
 
     @Test
     void getByIdSubscribe() {
-        Mono<Person> personMono = personRepository.getById(1);
+        int personId = 2;
+        Mono<Person> personMono = personRepository.getById(personId);
 
         personMono.subscribe(person -> {
             System.out.println(person);
+            assertEquals(personId, person.getId());
         });
         // personMono.subscribe(System.out::println);
     }
 
     @Test
     void getByIdMapFunction() {
-        Mono<Person> personMono = personRepository.getById(1);
+        int personId = 3;
+        Mono<Person> personMono = personRepository.getById(personId);
 
         personMono.map(person -> {
+            assertEquals(personId, person.getId());
             return person.getFirstName();
         }).subscribe(firstName -> {
             System.out.println(firstName);
