@@ -23,6 +23,7 @@ dependencies {
             "org.springframework.boot:spring-boot-starter-data-mongodb-reactive",
             "org.springframework.boot:spring-boot-starter-webflux"
     )
+    runtimeOnly("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
     testImplementation(
