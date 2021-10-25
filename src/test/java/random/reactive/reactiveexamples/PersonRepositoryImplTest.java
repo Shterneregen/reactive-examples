@@ -3,7 +3,10 @@ package random.reactive.reactiveexamples;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import random.reactive.reactiveexamples.domain.Person;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 class PersonRepositoryImplTest {
 
@@ -42,7 +45,39 @@ class PersonRepositoryImplTest {
         }).subscribe(firstName -> {
             System.out.println(firstName);
         });
-        // The same
-        personMono.map(Person::getFirstName).subscribe(System.out::println);
+        // personMono.map(Person::getFirstName).subscribe(System.out::println);
+    }
+
+    @Test
+    void testFluxBlockFirst() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        Person person = personFlux.blockFirst();
+
+        System.out.println(person);
+    }
+
+    @Test
+    void testFluxSubscribe() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        personFlux.subscribe(person -> {
+            System.out.println(person);
+        });
+        // personRepository.findAll().subscribe(System.out::println);
+    }
+
+    @Test
+    void testFluxToListMono() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        Mono<List<Person>> personListMono = personFlux.collectList();
+
+        personListMono.subscribe(list -> {
+            list.forEach(person -> {
+                System.out.println(person);
+            });
+        });
+        // personRepository.findAll().collectList().subscribe(list -> list.forEach(System.out::println));
     }
 }
