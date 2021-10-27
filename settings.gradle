@@ -3,5 +3,6 @@ rootProject.name = 'reactive-examples'
 include(
         "reactive",
         "netflux",
-        "rest-service"
+        "rest-service",
+        "webflux-client"
 )
