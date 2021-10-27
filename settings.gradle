@@ -2,5 +2,6 @@ rootProject.name = 'reactive-examples'
 
 include(
         "reactive",
-        "netflux"
+        "netflux",
+        "rest-service"
 )
