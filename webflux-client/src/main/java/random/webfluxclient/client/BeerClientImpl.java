@@ -1,13 +1,20 @@
 package random.webfluxclient.client;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 import random.webfluxclient.model.BeerDto;
 import random.webfluxclient.model.BeerPagedList;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+@RequiredArgsConstructor
+@Service
 public class BeerClientImpl implements BeerClient {
+
+    private final WebClient webClient;
 
     @Override
     public Mono<BeerDto> getBeerById(UUID id, Boolean showInventoryOnHand) {
