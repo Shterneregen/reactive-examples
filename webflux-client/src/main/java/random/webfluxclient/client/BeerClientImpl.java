@@ -4,13 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import random.webfluxclient.config.WebClientProperties;
 import random.webfluxclient.model.BeerDto;
 import random.webfluxclient.model.BeerPagedList;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
 import java.util.UUID;
+
+import static java.util.Optional.ofNullable;
+import static random.webfluxclient.config.WebClientProperties.BEER_V1_PATH;
+import static random.webfluxclient.config.WebClientProperties.BEER_V1_UPC_PATH;
 
 @RequiredArgsConstructor
 @Service
@@ -20,19 +22,23 @@ public class BeerClientImpl implements BeerClient {
 
     @Override
     public Mono<BeerDto> getBeerById(UUID id, Boolean showInventoryOnHand) {
-        return null;
+        return webClient.get().uri(uriBuilder -> uriBuilder.path(BEER_V1_PATH + "/" + id.toString())
+                        .queryParamIfPresent("showInventoryOnHand", ofNullable(showInventoryOnHand))
+                        .build()
+                ).retrieve()
+                .bodyToMono(BeerDto.class);
     }
 
     @Override
     public Mono<BeerPagedList> listBeers(Integer pageNumber, Integer pageSize, String beerName,
                                          String beerStyle, Boolean showInventoryOnhand) {
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path(WebClientProperties.BEER_V1_PATH)
-                        .queryParamIfPresent("pageNumber", Optional.ofNullable(pageNumber))
-                        .queryParamIfPresent("pageSize", Optional.ofNullable(pageSize))
-                        .queryParamIfPresent("beerName", Optional.ofNullable(beerName))
-                        .queryParamIfPresent("beerStyle", Optional.ofNullable(beerStyle))
-                        .queryParamIfPresent("showInventoryOnhand", Optional.ofNullable(showInventoryOnhand))
+                .uri(uriBuilder -> uriBuilder.path(BEER_V1_PATH)
+                        .queryParamIfPresent("pageNumber", ofNullable(pageNumber))
+                        .queryParamIfPresent("pageSize", ofNullable(pageSize))
+                        .queryParamIfPresent("beerName", ofNullable(beerName))
+                        .queryParamIfPresent("beerStyle", ofNullable(beerStyle))
+                        .queryParamIfPresent("showInventoryOnhand", ofNullable(showInventoryOnhand))
                         .build()
                 )
                 .retrieve()
@@ -56,6 +62,9 @@ public class BeerClientImpl implements BeerClient {
 
     @Override
     public Mono<BeerDto> getBeerByUPC(String upc) {
-        return null;
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder.path(BEER_V1_UPC_PATH + "/" + upc).build())
+                .retrieve()
+                .bodyToMono(BeerDto.class);
     }
 }
