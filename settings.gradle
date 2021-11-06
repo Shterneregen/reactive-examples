@@ -4,5 +4,6 @@ include(
         "reactive",
         "netflux",
         "rest-service",
-        "webflux-client"
+        "webflux-client",
+        "sfg-reactive-brewery"
 )
