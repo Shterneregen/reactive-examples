@@ -13,10 +13,10 @@ import random.sfgreactivebrewery.services.BeerService;
 import random.sfgreactivebrewery.web.controller.BeerController;
 import random.sfgreactivebrewery.web.model.BeerDto;
 import random.sfgreactivebrewery.web.model.BeerPagedList;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
@@ -73,11 +73,11 @@ class BeerControllerTest {
 
     @Test
     void getBeerById() {
-        UUID beerId = UUID.randomUUID();
-        given(beerService.getById(any(), any())).willReturn(validBeer);
+        Integer beerId = 1;
+        given(beerService.getById(any(), any())).willReturn(Mono.just(validBeer));
 
         webTestClient.get()
-                .uri("/api/v1/beer/" + beerId)
+                .uri("/api/v1/beer/{beerId}", beerId)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
