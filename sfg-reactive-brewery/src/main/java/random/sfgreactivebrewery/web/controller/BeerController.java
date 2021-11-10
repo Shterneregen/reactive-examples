@@ -49,6 +49,11 @@ public class BeerController {
                 beerName, beerStyle, PageRequest.of(pageNumber, pageSize), showInventoryOnHand));
     }
 
+    @ExceptionHandler
+    ResponseEntity<Void> handleNotFound(NotFoundException ex) {
+        return ResponseEntity.notFound().build();
+    }
+
     @GetMapping("beer/{beerId}")
     public ResponseEntity<Mono<BeerDto>> getBeerById(
             @PathVariable("beerId") Integer beerId,
@@ -56,8 +61,13 @@ public class BeerController {
         if (showInventoryOnHand == null) {
             showInventoryOnHand = false;
         }
-
-        return ResponseEntity.ok(beerService.getById(beerId, showInventoryOnHand));
+        return ResponseEntity.ok(beerService.getById(beerId, showInventoryOnHand)
+                .defaultIfEmpty(BeerDto.builder().build())
+                .doOnNext(beerDto -> {
+                    if (beerDto.getId() == null) {
+                        throw new NotFoundException();
+                    }
+                }));
     }
 
     @GetMapping("beerUpc/{upc}")
