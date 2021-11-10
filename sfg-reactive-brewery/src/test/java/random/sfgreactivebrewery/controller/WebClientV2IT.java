@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
+import random.sfgreactivebrewery.bootstrap.BeerLoader;
 import random.sfgreactivebrewery.web.functional.BeerRouterConfig;
 import random.sfgreactivebrewery.web.model.BeerDto;
 import reactor.core.publisher.Mono;
@@ -28,6 +29,37 @@ public class WebClientV2IT {
                 .baseUrl(BASE_URL)
                 .clientConnector(new ReactorClientHttpConnector(HttpClient.create().wiretap(true)))
                 .build();
+    }
+
+    @Test
+    void getBeerByUPC() throws InterruptedException {
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        webClient.get().uri(BeerRouterConfig.BEER_V2_URL_UPC, BeerLoader.BEER_2_UPC)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve().bodyToMono(BeerDto.class)
+                .subscribe(beer -> {
+                    assertThat(beer).isNotNull();
+                    assertThat(beer.getBeerName()).isNotNull();
+                    countDownLatch.countDown();
+                });
+
+        countDownLatch.await(2000, TimeUnit.MILLISECONDS);
+        assertThat(countDownLatch.getCount()).isZero();
+    }
+
+    @Test
+    void getBeerByUPCNotFound() throws InterruptedException {
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        webClient.get().uri(BeerRouterConfig.BEER_V2_URL_UPC, "4484848393939292")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve().bodyToMono(BeerDto.class)
+                .subscribe(beer -> {
+                }, throwable -> countDownLatch.countDown());
+
+        countDownLatch.await(2000, TimeUnit.MILLISECONDS);
+        assertThat(countDownLatch.getCount()).isZero();
     }
 
     @Test

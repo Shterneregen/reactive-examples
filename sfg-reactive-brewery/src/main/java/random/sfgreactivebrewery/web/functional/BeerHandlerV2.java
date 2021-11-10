@@ -14,6 +14,14 @@ import reactor.core.publisher.Mono;
 public class BeerHandlerV2 {
     private final BeerService beerService;
 
+    public Mono<ServerResponse> getBeerByUPC(ServerRequest request){
+        String upc = request.pathVariable("upc");
+
+        return beerService.getByUpc(upc)
+                .flatMap(beerDto -> ServerResponse.ok().bodyValue(beerDto))
+                .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
     public Mono<ServerResponse> getBeerById(ServerRequest request) {
         Integer beerId = Integer.valueOf(request.pathVariable("beerId"));
         Boolean showInventory = Boolean.valueOf(request.queryParam("showInventory").orElse("false"));
