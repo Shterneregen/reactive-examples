@@ -13,6 +13,7 @@ import random.sfgreactivebrewery.web.model.BeerStyleEnum;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/")
@@ -67,12 +68,16 @@ public class BeerController {
     @PostMapping(path = "beer")
     public ResponseEntity<Void> saveNewBeer(@RequestBody @Validated BeerDto beerDto) {
 
-        BeerDto savedBeer = beerService.saveNewBeer(beerDto);
+        AtomicInteger atomicIntegerBeerId = new AtomicInteger();
+
+        beerService.saveNewBeer(beerDto).subscribe(savedBeerDto -> {
+            atomicIntegerBeerId.set(savedBeerDto.getId());
+        });
 
         return ResponseEntity
                 .created(UriComponentsBuilder
-                        .fromHttpUrl("http://api.springframework.guru/api/v1/beer/" + savedBeer.getId().toString())
-                        .build().toUri())
+                        .fromHttpUrl("http://api.springframework.guru/api/v1/beer/{id}")
+                        .build(atomicIntegerBeerId.get()))
                 .build();
     }
 
