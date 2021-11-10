@@ -6,8 +6,6 @@ import random.sfgreactivebrewery.web.model.BeerPagedList;
 import random.sfgreactivebrewery.web.model.BeerStyleEnum;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
-
 public interface BeerService {
     Mono<BeerPagedList> listBeers(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest, Boolean showInventoryOnHand);
 
@@ -15,7 +13,7 @@ public interface BeerService {
 
     Mono<BeerDto> saveNewBeer(BeerDto beerDto);
 
-    BeerDto updateBeer(UUID beerId, BeerDto beerDto);
+    Mono<BeerDto> updateBeer(Integer beerId, BeerDto beerDto);
 
     Mono<BeerDto> getByUpc(String upc);
 

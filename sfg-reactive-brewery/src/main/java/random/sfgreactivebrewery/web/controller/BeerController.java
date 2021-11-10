@@ -12,7 +12,6 @@ import random.sfgreactivebrewery.web.model.BeerPagedList;
 import random.sfgreactivebrewery.web.model.BeerStyleEnum;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
@@ -83,8 +82,8 @@ public class BeerController {
 
     @PutMapping("beer/{beerId}")
     public ResponseEntity<Void> updateBeerById(
-            @PathVariable("beerId") UUID beerId,
-            @RequestBody @Validated BeerDto beerDto) {
+            @PathVariable("beerId") Integer beerId, @RequestBody @Validated BeerDto beerDto) {
+        beerService.updateBeer(beerId, beerDto).subscribe();
         return ResponseEntity.noContent().build();
     }
 
