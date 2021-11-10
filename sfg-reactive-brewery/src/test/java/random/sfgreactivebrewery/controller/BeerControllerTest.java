@@ -60,10 +60,10 @@ class BeerControllerTest {
 
     @Test
     void getBeerByUPC() {
-        given(beerService.getByUpc(any())).willReturn(validBeer);
+        given(beerService.getByUpc(any())).willReturn(Mono.just(validBeer));
 
         webTestClient.get()
-                .uri("/api/v1/beerUpc/" + validBeer.getUpc())
+                .uri("/api/v1/beerUpc/{beerUpc}", validBeer.getUpc())
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
