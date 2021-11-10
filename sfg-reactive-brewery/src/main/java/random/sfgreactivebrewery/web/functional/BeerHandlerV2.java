@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import random.sfgreactivebrewery.services.BeerService;
+import random.sfgreactivebrewery.web.model.BeerDto;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -14,7 +15,15 @@ import reactor.core.publisher.Mono;
 public class BeerHandlerV2 {
     private final BeerService beerService;
 
-    public Mono<ServerResponse> getBeerByUPC(ServerRequest request){
+    public Mono<ServerResponse> saveNewBeer(ServerRequest request) {
+        Mono<BeerDto> beerDtoMono = request.bodyToMono(BeerDto.class);
+        return beerService.saveNewBeerMono(beerDtoMono)
+                .flatMap(beerDto -> ServerResponse.ok()
+                        .header("location", BeerRouterConfig.BEER_V2_URL + "/" + beerDto.getId())
+                        .build());
+    }
+
+    public Mono<ServerResponse> getBeerByUPC(ServerRequest request) {
         String upc = request.pathVariable("upc");
 
         return beerService.getByUpc(upc)
