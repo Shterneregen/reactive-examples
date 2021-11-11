@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ServerWebInputException;
 import random.sfgreactivebrewery.services.BeerService;
+import random.sfgreactivebrewery.web.controller.NotFoundException;
 import random.sfgreactivebrewery.web.model.BeerDto;
 import reactor.core.publisher.Mono;
 
@@ -65,5 +66,11 @@ public class BeerHandlerV2 {
         return beerService.getById(beerId, showInventory)
                 .flatMap(beerDto -> ServerResponse.ok().bodyValue(beerDto))
                 .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    public Mono<ServerResponse> deleteBeer(ServerRequest request) {
+        return beerService.reactiveDeleteById(Integer.valueOf(request.pathVariable("beerId")))
+                .flatMap(voidMono -> ServerResponse.ok().build())
+                .onErrorResume(e -> e instanceof NotFoundException, e -> ServerResponse.notFound().build());
     }
 }
