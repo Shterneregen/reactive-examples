@@ -8,3 +8,4 @@
    2. Regular REST endpoints
    3. Functional endpoints
 6. `streaming-stock-quote-service` - creates an endless stream of data
+7. `mongo-stock-quote-service`

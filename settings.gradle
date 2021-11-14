@@ -6,5 +6,6 @@ include(
         "rest-service",
         "webflux-client",
         "sfg-reactive-brewery",
-        "streaming-stock-quote-service"
+        "streaming-stock-quote-service",
+        "mongo-stock-quote-service"
 )
