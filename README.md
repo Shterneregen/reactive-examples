@@ -10,3 +10,4 @@
     3. Functional endpoints
 6. `streaming-stock-quote-service` - creates an endless stream of data
 7. `mongo-stock-quote-service` - using reactive MonoDB
+8. `rabbit-stock-quote-service`
